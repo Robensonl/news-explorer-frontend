@@ -1,0 +1,1 @@
+The issue has been closed because it is a duplicate of issue #1.
