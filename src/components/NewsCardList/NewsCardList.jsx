@@ -17,21 +17,26 @@ function NewsCardList({ articles, isLoggedIn, savedArticles, onSaveArticle, onRe
 
   if (articles.length === 0) {
     return (
-      <div className="max-w-content mx-auto px-4 md:px-8 lg:px-16 py-20 text-center">
-        <div className="max-w-md mx-auto">
-          <div className="mb-6">
-            <svg className="w-24 h-24 mx-auto text-text-secondary opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+      <section className="bg-background-light py-20">
+        <div className="max-w-content mx-auto px-4 md:px-8 lg:px-16">
+          <div className="max-w-xl mx-auto text-center">
+            <div className="mb-8">
+              {/* Ícono de lupa con X */}
+              <svg className="w-32 h-32 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8" strokeWidth="2"/>
+                <path strokeLinecap="round" strokeWidth="2" d="M21 21l-4.35-4.35"/>
+                <path strokeLinecap="round" strokeWidth="2.5" d="M8 8l6 6m0-6l-6 6"/>
+              </svg>
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+              No se encontró nada
+            </h3>
+            <p className="text-text-secondary text-lg md:text-xl">
+              Lo sentimos, pero no hay nada que coincida<br />con tus términos de búsqueda.
+            </p>
           </div>
-          <h3 className="text-2xl font-bold text-text-primary mb-3">
-            No se encontraron resultados
-          </h3>
-          <p className="text-text-secondary text-lg">
-            Lo sentimos, pero no encontramos nada que coincida con tu búsqueda.
-          </p>
         </div>
-      </div>
+      </section>
     );
   }
 

@@ -1,5 +1,5 @@
 // API configuration
-const API_KEY = 'YOUR_NEWS_API_KEY_HERE'; // Reemplaza con tu API key de newsapi.org
+const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 const BASE_URL = 'https://newsapi.org/v2';
 
 // Calcular fecha de hace 7 días
