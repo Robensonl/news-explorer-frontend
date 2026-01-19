@@ -1,11 +1,15 @@
 import NewsCard from '../NewsCard/NewsCard';
 import { useState } from 'react';
 
-function NewsCardList({ articles }) {
+function NewsCardList({ articles, isLoggedIn, savedArticles, onSaveArticle, onRemoveArticle, showKeyword, keyword }) {
   const [visibleCount, setVisibleCount] = useState(3);
 
   const handleShowMore = () => {
     setVisibleCount(prev => prev + 3);
+  };
+
+  const isArticleSaved = (article) => {
+    return savedArticles.some(saved => saved.url === article.url);
   };
 
   const visibleArticles = articles.slice(0, visibleCount);
@@ -43,6 +47,12 @@ function NewsCardList({ articles }) {
             <NewsCard
               key={`${article.url}-${index}`}
               article={article}
+              isLoggedIn={isLoggedIn}
+              isSaved={isArticleSaved(article)}
+              onSave={onSaveArticle}
+              onRemove={onRemoveArticle}
+              showKeyword={showKeyword}
+              keyword={keyword}
             />
           ))}
         </div>

@@ -1,45 +1,69 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './Header/Header';
 import Main from './Main/Main';
 import Footer from './Footer/Footer';
 import SearchForm from './SearchForm/SearchForm';
 import NewsCardList from './NewsCardList/NewsCardList';
+import SavedNews from './SavedNews/SavedNews';
 import About from './About/About';
 import Preloader from './Preloader/Preloader';
+import Login from './Login/Login';
+import Register from './Register/Register';
+import ProtectedRoute from './ProtectedRoute/ProtectedRoute';
+import CurrentUserContext from '../contexts/CurrentUserContext';
 import { searchNews, filterValidArticles } from '../utils/NewsApi';
+import * as MainApi from '../utils/MainApi';
 import { 
   getFromLocalStorage,
-  saveToLocalStorage
+  saveToLocalStorage,
+  removeFromLocalStorage
 } from '../utils/utils';
 import { STORAGE_KEYS, ERROR_MESSAGES } from '../utils/constants';
 
 function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [articles, setArticles] = useState([]);
+  const [savedArticles, setSavedArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [error, setError] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [showRegisterPopup, setShowRegisterPopup] = useState(false);
+
+  // Verificar token al cargar la aplicación
+  useEffect(() => {
+    const token = getFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
+    if (token) {
+      MainApi.checkToken(token)
+        .then(user => {
+          setCurrentUser(user);
+          setIsLoggedIn(true);
+          return MainApi.getSavedArticles(token);
+        })
+        .then(articles => {
+          setSavedArticles(articles);
+        })
+        .catch(err => {
+          console.error('Error al verificar token:', err);
+          removeFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
+        });
+    }
+  }, []);
 
   const handleSearch = async (query) => {
     setIsLoading(true);
     setSearchQuery(query);
-    setError('');
-    setHasSearched(true);
 
     try {
-      // Intenta buscar con la API real
       const foundArticles = await searchNews(query);
       const validArticles = filterValidArticles(foundArticles);
       setArticles(validArticles);
-      
-      // Guardar última búsqueda
       saveToLocalStorage(STORAGE_KEYS.SEARCH_QUERY, query);
     } catch (error) {
       console.error('Error al buscar noticias:', error);
-      setError(ERROR_MESSAGES.API_ERROR);
       
-      // Fallback: usar datos de ejemplo si la API falla
+      // Fallback con datos de ejemplo
       const mockArticles = [
         {
           title: 'Descubrimiento científico revoluciona la industria tecnológica',
@@ -72,23 +96,121 @@ function App() {
     }
   };
 
+  const handleRegister = async (name, email, password) => {
+    try {
+      await MainApi.register(name, email, password);
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  };
+
+  const handleLogin = async (email, password) => {
+    try {
+      const data = await MainApi.login(email, password);
+      const { token } = data;
+      
+      saveToLocalStorage(STORAGE_KEYS.AUTH_TOKEN, token);
+      
+      const user = await MainApi.checkToken(token);
+      setCurrentUser(user);
+      setIsLoggedIn(true);
+      
+      const articles = await MainApi.getSavedArticles(token);
+      setSavedArticles(articles);
+      
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  };
+
+  const handleSignOut = () => {
+    setCurrentUser(null);
+    setIsLoggedIn(false);
+    setSavedArticles([]);
+    removeFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
+  };
+
+  const handleSaveArticle = async (article) => {
+    if (!isLoggedIn) {
+      setShowLoginPopup(true);
+      return;
+    }
+
+    const token = getFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
+    const articleData = {
+      keyword: searchQuery,
+      title: article.title,
+      text: article.description,
+      date: article.publishedAt,
+      source: article.source.name,
+      link: article.url,
+      image: article.urlToImage
+    };
+
+    try {
+      const savedArticle = await MainApi.saveArticle(token, articleData);
+      setSavedArticles(prev => [...prev, { ...article, keyword: searchQuery, _id: savedArticle._id }]);
+    } catch (error) {
+      console.error('Error al guardar artículo:', error);
+    }
+  };
+
+  const handleRemoveArticle = async (article) => {
+    const token = getFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
+    
+    try {
+      await MainApi.deleteArticle(token, article._id);
+      setSavedArticles(prev => prev.filter(saved => saved._id !== article._id));
+    } catch (error) {
+      console.error('Error al eliminar artículo:', error);
+    }
+  };
+
   return (
-    <Router>
-      <AppContent
-        articles={articles}
-        isLoading={isLoading}
-        searchQuery={searchQuery}
-        onSearch={handleSearch}
-      />
-    </Router>
+    <CurrentUserContext.Provider value={currentUser}>
+      <Router>
+        <AppContent
+          currentUser={currentUser}
+          isLoggedIn={isLoggedIn}
+          articles={articles}
+          savedArticles={savedArticles}
+          isLoading={isLoading}
+          searchQuery={searchQuery}
+          showLoginPopup={showLoginPopup}
+          showRegisterPopup={showRegisterPopup}
+          onSearch={handleSearch}
+          onSaveArticle={handleSaveArticle}
+          onRemoveArticle={handleRemoveArticle}
+          onLogin={handleLogin}
+          onRegister={handleRegister}
+          onSignOut={handleSignOut}
+          setShowLoginPopup={setShowLoginPopup}
+          setShowRegisterPopup={setShowRegisterPopup}
+        />
+      </Router>
+    </CurrentUserContext.Provider>
   );
 }
 
 function AppContent({ 
+  currentUser, 
+  isLoggedIn, 
   articles, 
+  savedArticles, 
   isLoading, 
   searchQuery,
-  onSearch
+  showLoginPopup,
+  showRegisterPopup,
+  onSearch, 
+  onSaveArticle, 
+  onRemoveArticle, 
+  onLogin, 
+  onRegister,
+  onSignOut,
+  setShowLoginPopup,
+  setShowRegisterPopup
 }) {
   const location = useLocation();
   const currentPage = location.pathname === '/saved-news' ? 'saved' : 'home';
@@ -96,7 +218,11 @@ function AppContent({
   return (
     <div className="flex flex-col min-h-screen">
       <Header 
+        isLoggedIn={isLoggedIn}
         currentPage={currentPage}
+        onSignIn={() => setShowLoginPopup(true)}
+        onSignOut={onSignOut}
+        userName={currentUser?.name || ''}
       />
 
       <Routes>
@@ -108,14 +234,61 @@ function AppContent({
             ) : articles.length > 0 ? (
               <NewsCardList
                 articles={articles}
+                isLoggedIn={isLoggedIn}
+                savedArticles={savedArticles}
+                onSaveArticle={onSaveArticle}
+                onRemoveArticle={onRemoveArticle}
+                keyword={searchQuery}
               />
             ) : null}
             <About />
           </Main>
         } />
+
+        <Route 
+          path="/saved-news" 
+          element={
+            <ProtectedRoute 
+              isLoggedIn={isLoggedIn} 
+              onSignIn={() => setShowLoginPopup(true)}
+            >
+              <Main>
+                <SavedNews
+                  userName={currentUser?.name || 'Usuario'}
+                  savedArticles={savedArticles}
+                  onRemoveArticle={onRemoveArticle}
+                />
+              </Main>
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
 
       <Footer />
+
+      {/* Login Modal */}
+      {showLoginPopup && (
+        <Login
+          onClose={() => setShowLoginPopup(false)}
+          onLogin={onLogin}
+          onSwitchToRegister={() => {
+            setShowLoginPopup(false);
+            setShowRegisterPopup(true);
+          }}
+        />
+      )}
+
+      {/* Register Modal */}
+      {showRegisterPopup && (
+        <Register
+          onClose={() => setShowRegisterPopup(false)}
+          onRegister={onRegister}
+          onSwitchToLogin={() => {
+            setShowRegisterPopup(false);
+            setShowLoginPopup(true);
+          }}
+        />
+      )}
     </div>
   );
 }

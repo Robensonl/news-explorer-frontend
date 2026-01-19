@@ -1,3 +1,19 @@
+// Validación de email
+export const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// Validación de contraseña (mínimo 8 caracteres)
+export const validatePassword = (password) => {
+  return password && password.length >= 8;
+};
+
+// Validación de nombre (mínimo 2 caracteres)
+export const validateName = (name) => {
+  return name && name.trim().length >= 2;
+};
+
 // Formatear fecha
 export const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -8,6 +24,21 @@ export const formatDate = (dateString) => {
 export const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) return text;
   return text.substring(0, maxLength) + '...';
+};
+
+// Extraer palabras clave únicas
+export const extractKeywords = (articles) => {
+  const keywordCounts = {};
+  
+  articles.forEach(article => {
+    if (article.keyword) {
+      keywordCounts[article.keyword] = (keywordCounts[article.keyword] || 0) + 1;
+    }
+  });
+  
+  return Object.entries(keywordCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([keyword]) => keyword);
 };
 
 // Guardar en localStorage
