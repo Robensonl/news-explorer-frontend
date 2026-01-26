@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { validateEmail, validatePassword } from '../../utils/utils';
+import { validateEmail, validatePassword } from '../../utils/auth';
 
 function Login({ onClose, onLogin, onSwitchToRegister }) {
   const [formData, setFormData] = useState({

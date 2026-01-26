@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { validateEmail, validatePassword, validateName } from '../../utils/utils';
+import { validateEmail, validatePassword, validateName } from '../../utils/auth';
 
 function Register({ onClose, onRegister, onSwitchToLogin }) {
   const [formData, setFormData] = useState({
@@ -14,7 +14,9 @@ function Register({ onClose, onRegister, onSwitchToLogin }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+       ...prev, [name]: value 
+      }));
     
     // Validación en tiempo real
     if (errors[name]) {

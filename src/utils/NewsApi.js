@@ -1,15 +1,15 @@
-// API configuration
+
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 const BASE_URL = 'https://newsapi.org/v2';
 
-// Calcular fecha de hace 7 días
+
 const getLastWeekDate = () => {
   const date = new Date();
   date.setDate(date.getDate() - 7);
   return date.toISOString().split('T')[0];
 };
 
-// Buscar noticias por palabra clave
+
 export const searchNews = async (query) => {
   const fromDate = getLastWeekDate();
   const url = `${BASE_URL}/everything?q=${encodeURIComponent(query)}&from=${fromDate}&sortBy=publishedAt&language=es&apiKey=${API_KEY}`;

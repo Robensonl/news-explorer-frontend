@@ -17,18 +17,15 @@ function NewsCard({ article, isLoggedIn, isSaved, onSave, onRemove, showKeyword,
     return new Date(dateString).toLocaleDateString('es-ES', options);
   };
 
-  const defaultImage = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600';
-
   return (
     <article 
       className="group bg-white rounded-card overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image Section */}
       <div className="relative h-56 md:h-64 overflow-hidden">
         <img
-          src={imageError ? defaultImage : article.urlToImage || defaultImage}
+          src={article.urlToImage}
           alt={article.title}
           onError={() => setImageError(true)}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -52,12 +49,10 @@ function NewsCard({ article, isLoggedIn, isSaved, onSave, onRemove, showKeyword,
                 aria-label={isSaved ? 'Eliminar de guardados' : 'Guardar artículo'}
               >
                 {showKeyword ? (
-                  // Icono de basura para saved news page
                   <svg className="w-6 h-6 stroke-primary-black group-hover/btn:stroke-red-500" fill="none" viewBox="0 0 24 24" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 ) : (
-                  // Icono de bookmark para home page
                   <svg 
                     className={`w-6 h-6 transition-colors ${
                       isSaved ? 'fill-accent-blue stroke-accent-blue' : 'fill-none stroke-primary-black group-hover/btn:stroke-accent-blue'
@@ -95,7 +90,7 @@ function NewsCard({ article, isLoggedIn, isSaved, onSave, onRemove, showKeyword,
         </div>
       </div>
 
-      {/* Content Section */}
+     
       <div className="p-5 md:p-6">
         <time className="text-text-secondary text-sm mb-3 block">
           {formatDate(article.publishedAt)}

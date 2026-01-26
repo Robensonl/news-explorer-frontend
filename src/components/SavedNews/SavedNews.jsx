@@ -1,6 +1,6 @@
 import SavedNewsHeader from '../SavedNewsHeader/SavedNewsHeader';
 import NewsCardList from '../NewsCardList/NewsCardList';
-import { extractKeywords } from '../../utils/utils';
+import { extractKeywords } from '../../utils/auth';
 
 function SavedNews({ userName, savedArticles, onRemoveArticle }) {
   const keywords = extractKeywords(savedArticles);

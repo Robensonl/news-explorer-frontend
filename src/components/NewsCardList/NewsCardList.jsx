@@ -1,5 +1,6 @@
 import NewsCard from '../NewsCard/NewsCard';
 import { useState } from 'react';
+import NotImage from '../../assets/images/not-found.png';
 
 function NewsCardList({ articles, isLoggedIn, savedArticles, onSaveArticle, onRemoveArticle, showKeyword, keyword }) {
   const [visibleCount, setVisibleCount] = useState(3);
@@ -15,30 +16,32 @@ function NewsCardList({ articles, isLoggedIn, savedArticles, onSaveArticle, onRe
   const visibleArticles = articles.slice(0, visibleCount);
   const hasMore = visibleCount < articles.length;
 
-  if (articles.length === 0) {
-    return (
-      <section className="bg-background-light py-20">
-        <div className="max-w-content mx-auto px-4 md:px-8 lg:px-16">
-          <div className="max-w-xl mx-auto text-center">
-            <div className="mb-8">
-              {/* Ícono de lupa con X */}
-              <svg className="w-32 h-32 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8" strokeWidth="2"/>
-                <path strokeLinecap="round" strokeWidth="2" d="M21 21l-4.35-4.35"/>
-                <path strokeLinecap="round" strokeWidth="2.5" d="M8 8l6 6m0-6l-6 6"/>
-              </svg>
-            </div>
-            <h3 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
-              No se encontró nada
-            </h3>
-            <p className="text-text-secondary text-lg md:text-xl">
-              Lo sentimos, pero no hay nada que coincida<br />con tus términos de búsqueda.
-            </p>
-          </div>
+ if (articles.length === 0) {
+  return (
+    <section className="bg-background-light py-24">
+      <div className="max-w-content mx-auto px-4 md:px-8 lg:px-16">
+        <div className="max-w-md mx-auto text-center flex flex-col items-center">
+          <img 
+            src={NotImage} 
+            alt="No se encontró nada"
+            className="w-24 h-24 mb-6 opacity-70"
+          />
+
+          <h3 className="text-3xl font-bold text-text-primary mb-4">
+            No se encontró nada
+          </h3>
+
+          <p className="text-text-secondary text-lg">
+            Lo sentimos, pero no hay nada que coincida <br />
+            con tus términos de búsqueda.
+          </p>
+
         </div>
-      </section>
-    );
-  }
+      </div>
+    </section>
+  );
+}
+
 
   return (
     <section className="bg-background-light py-16 md:py-20">

@@ -18,7 +18,7 @@ import {
   getFromLocalStorage,
   saveToLocalStorage,
   removeFromLocalStorage
-} from '../utils/utils';
+} from '../utils/auth';
 import { STORAGE_KEYS, ERROR_MESSAGES } from '../utils/constants';
 
 function App() {
@@ -31,7 +31,7 @@ function App() {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showRegisterPopup, setShowRegisterPopup] = useState(false);
 
-  // Verificar token al cargar la aplicación
+ 
   useEffect(() => {
     const token = getFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
     if (token) {
@@ -54,6 +54,7 @@ function App() {
   const handleSearch = async (query) => {
     setIsLoading(true);
     setSearchQuery(query);
+    setArticles([]);
 
     try {
       const foundArticles = await searchNews(query);
@@ -62,38 +63,11 @@ function App() {
       saveToLocalStorage(STORAGE_KEYS.SEARCH_QUERY, query);
     } catch (error) {
       console.error('Error al buscar noticias:', error);
-      
-      // Fallback con datos de ejemplo
-      const mockArticles = [
-        {
-          title: 'Descubrimiento científico revoluciona la industria tecnológica',
-          description: 'Un nuevo avance en computación cuántica promete cambiar el panorama tecnológico mundial.',
-          url: 'https://example.com/article1',
-          urlToImage: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600',
-          publishedAt: new Date().toISOString(),
-          source: { name: 'Tech News' }
-        },
-        {
-          title: 'Cambio climático: nuevas medidas adoptadas a nivel global',
-          description: 'Líderes mundiales se reúnen para discutir estrategias contra el cambio climático.',
-          url: 'https://example.com/article2',
-          urlToImage: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600',
-          publishedAt: new Date(Date.now() - 86400000).toISOString(),
-          source: { name: 'Global News' }
-        },
-        {
-          title: 'Innovación en energías renovables alcanza récord histórico',
-          description: 'La producción de energía solar y eólica supera todas las expectativas este año.',
-          url: 'https://example.com/article3',
-          urlToImage: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600',
-          publishedAt: new Date(Date.now() - 172800000).toISOString(),
-          source: { name: 'Energy Today' }
-        }
-      ];
-      setArticles(mockArticles);
+      setArticles([]);
     } finally {
       setIsLoading(false);
     }
+      
   };
 
   const handleRegister = async (name, email, password) => {
@@ -229,18 +203,18 @@ function AppContent({
         <Route path="/" element={
           <Main>
             <SearchForm onSearch={onSearch} isLoading={isLoading} />
-            {isLoading ? (
-              <Preloader />
-            ) : articles.length > 0 ? (
+            {isLoading && <Preloader />}
+            {!isLoading && searchQuery &&(
               <NewsCardList
                 articles={articles}
                 isLoggedIn={isLoggedIn}
                 savedArticles={savedArticles}
                 onSaveArticle={onSaveArticle}
                 onRemoveArticle={onRemoveArticle}
+                showKeyword={false}
                 keyword={searchQuery}
               />
-            ) : null}
+            )}
             <About />
           </Main>
         } />
@@ -266,7 +240,6 @@ function AppContent({
 
       <Footer />
 
-      {/* Login Modal */}
       {showLoginPopup && (
         <Login
           onClose={() => setShowLoginPopup(false)}
@@ -278,7 +251,6 @@ function AppContent({
         />
       )}
 
-      {/* Register Modal */}
       {showRegisterPopup && (
         <Register
           onClose={() => setShowRegisterPopup(false)}

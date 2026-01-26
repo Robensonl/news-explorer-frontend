@@ -33,7 +33,7 @@ function PopupWithForm({ isOpen, onClose, title, buttonText, onSubmit, children,
       onClick={handleOverlayClick}
     >
       <div className="bg-white rounded-2xl w-full max-w-md p-8 relative animate-slideUp shadow-2xl">
-        {/* Close button */}
+
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
@@ -44,12 +44,10 @@ function PopupWithForm({ isOpen, onClose, title, buttonText, onSubmit, children,
           </svg>
         </button>
 
-        {/* Title */}
         <h2 className="text-2xl font-bold text-text-primary mb-6">
           {title}
         </h2>
 
-        {/* Form */}
         <form onSubmit={onSubmit} className="space-y-6">
           {children}
 
@@ -61,7 +59,6 @@ function PopupWithForm({ isOpen, onClose, title, buttonText, onSubmit, children,
           </button>
         </form>
 
-        {/* Alternative action */}
         {alternativeText && onAlternativeClick && (
           <div className="mt-6 text-center">
             <p className="text-text-secondary">

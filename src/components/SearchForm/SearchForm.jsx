@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import bgImage from '../../assets/images/hero-bg.jpg';
 
 function SearchForm({ onSearch, isLoading }) {
   const [query, setQuery] = useState('');
@@ -22,8 +23,11 @@ function SearchForm({ onSearch, isLoading }) {
   };
 
   return (
-    <section className="relative w-full bg-gradient-to-br from-gray-900 via-primary-black to-gray-800">
-      <div className="max-w-content mx-auto px-4 md:px-8 lg:px-16 py-20 md:py-32">
+    <section
+      className="relative w-full bg-gradient-to-br from-gray-900 via-primary-black to-gray-800 bg-cover bg-center min-h-[520px] md:min-h-[640px] flex items-center"
+      style={{ backgroundImage: `url(${bgImage})` }}
+    >
+      <div className="max-w-content mx-auto px-4 md:px-8 lg:px-16 py-0 md:py-4 relative z-10 w-full">
         <div className="max-w-2xl mx-auto text-center">
           <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
             Lo que pasa en el mundo

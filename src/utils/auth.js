@@ -1,15 +1,13 @@
-// Validación de email
+
 export const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-// Validación de contraseña (mínimo 8 caracteres)
 export const validatePassword = (password) => {
   return password && password.length >= 8;
 };
 
-// Validación de nombre (mínimo 2 caracteres)
 export const validateName = (name) => {
   return name && name.trim().length >= 2;
 };
@@ -25,8 +23,6 @@ export const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) return text;
   return text.substring(0, maxLength) + '...';
 };
-
-// Extraer palabras clave únicas
 export const extractKeywords = (articles) => {
   const keywordCounts = {};
   
@@ -41,7 +37,6 @@ export const extractKeywords = (articles) => {
     .map(([keyword]) => keyword);
 };
 
-// Guardar en localStorage
 export const saveToLocalStorage = (key, data) => {
   try {
     localStorage.setItem(key, JSON.stringify(data));
@@ -52,7 +47,7 @@ export const saveToLocalStorage = (key, data) => {
   }
 };
 
-// Obtener de localStorage
+
 export const getFromLocalStorage = (key) => {
   try {
     const item = localStorage.getItem(key);
@@ -63,7 +58,6 @@ export const getFromLocalStorage = (key) => {
   }
 };
 
-// Remover de localStorage
 export const removeFromLocalStorage = (key) => {
   try {
     localStorage.removeItem(key);

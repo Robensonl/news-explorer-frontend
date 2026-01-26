@@ -1,7 +1,7 @@
-// URL base del backend
+
 const BASE_URL = 'http://localhost:3000';
 
-// Manejo de respuesta
+
 const handleResponse = (res) => {
   if (res.ok) {
     return res.json();
@@ -9,7 +9,7 @@ const handleResponse = (res) => {
   return Promise.reject(`Error: ${res.status}`);
 };
 
-// Registro de usuario
+
 export const register = (name, email, password) => {
   return fetch(`${BASE_URL}/signup`, {
     method: 'POST',
@@ -20,7 +20,7 @@ export const register = (name, email, password) => {
   }).then(handleResponse);
 };
 
-// Inicio de sesión
+
 export const login = (email, password) => {
   return fetch(`${BASE_URL}/signin`, {
     method: 'POST',
@@ -31,7 +31,7 @@ export const login = (email, password) => {
   }).then(handleResponse);
 };
 
-// Verificar token
+
 export const checkToken = (token) => {
   return fetch(`${BASE_URL}/users/me`, {
     method: 'GET',
@@ -42,7 +42,7 @@ export const checkToken = (token) => {
   }).then(handleResponse);
 };
 
-// Obtener artículos guardados
+
 export const getSavedArticles = (token) => {
   return fetch(`${BASE_URL}/articles`, {
     method: 'GET',
@@ -53,7 +53,7 @@ export const getSavedArticles = (token) => {
   }).then(handleResponse);
 };
 
-// Guardar artículo
+
 export const saveArticle = (token, articleData) => {
   return fetch(`${BASE_URL}/articles`, {
     method: 'POST',
@@ -65,7 +65,7 @@ export const saveArticle = (token, articleData) => {
   }).then(handleResponse);
 };
 
-// Eliminar artículo
+
 export const deleteArticle = (token, articleId) => {
   return fetch(`${BASE_URL}/articles/${articleId}`, {
     method: 'DELETE',

@@ -16,7 +16,6 @@ function Navigation({ isLoggedIn, currentPage, onSignIn, onSignOut, textColor, u
 
   return (
     <nav className="flex items-center justify-between py-6 md:py-8">
-      {/* Logo */}
       <Link 
         to="/" 
         className={`text-xl md:text-2xl font-bold ${textColor} hover:opacity-70 transition-opacity`}
@@ -24,7 +23,6 @@ function Navigation({ isLoggedIn, currentPage, onSignIn, onSignOut, textColor, u
         NewsExplorer
       </Link>
 
-      {/* Desktop Navigation */}
       <div className="hidden md:flex items-center gap-8">
         <Link to="/" className={linkClass('home')}>
           Inicio
@@ -56,7 +54,6 @@ function Navigation({ isLoggedIn, currentPage, onSignIn, onSignOut, textColor, u
         )}
       </div>
 
-      {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         className={`md:hidden ${textColor} p-2`}
@@ -71,7 +68,6 @@ function Navigation({ isLoggedIn, currentPage, onSignIn, onSignOut, textColor, u
         </svg>
       </button>
 
-      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="absolute top-20 left-0 right-0 bg-white shadow-lg md:hidden z-50">
           <div className="flex flex-col p-6 gap-6">
