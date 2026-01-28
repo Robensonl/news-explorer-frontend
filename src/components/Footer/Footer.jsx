@@ -9,7 +9,7 @@ function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
             <p className="text-text-secondary text-sm">
-              © {currentYear} Robenson Louissaint. Todos los derechos reservados.
+              © {currentYear} News Explorer. Todos los derechos reservados.
             </p>
             
             <nav className="flex gap-6">

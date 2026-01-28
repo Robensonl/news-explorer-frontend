@@ -1,5 +1,5 @@
 
-const BASE_URL = 'http://localhost:3000';
+const AUTH_BASE_URL = 'http://localhost:3000';
 
 
 const handleResponse = (res) => {
@@ -11,7 +11,7 @@ const handleResponse = (res) => {
 
 
 export const register = (name, email, password) => {
-  return fetch(`${BASE_URL}/signup`, {
+  return fetch(`${AUTH_BASE_URL}/signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ export const register = (name, email, password) => {
 
 
 export const login = (email, password) => {
-  return fetch(`${BASE_URL}/signin`, {
+  return fetch(`${AUTH_BASE_URL}/signin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export const login = (email, password) => {
 
 
 export const checkToken = (token) => {
-  return fetch(`${BASE_URL}/users/me`, {
+  return fetch(`${AUTH_BASE_URL}/users/me`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export const checkToken = (token) => {
 
 
 export const getSavedArticles = (token) => {
-  return fetch(`${BASE_URL}/articles`, {
+  return fetch(`${AUTH_BASE_URL}/articles`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ export const getSavedArticles = (token) => {
 
 
 export const saveArticle = (token, articleData) => {
-  return fetch(`${BASE_URL}/articles`, {
+  return fetch(`${AUTH_BASE_URL}/articles`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export const saveArticle = (token, articleData) => {
 
 
 export const deleteArticle = (token, articleId) => {
-  return fetch(`${BASE_URL}/articles/${articleId}`, {
+  return fetch(`${AUTH_BASE_URL}/articles/${articleId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

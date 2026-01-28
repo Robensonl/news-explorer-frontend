@@ -1,6 +1,6 @@
 
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
-const BASE_URL = 'https://newsapi.org/v2';
+const NEWS_BASE_URL = 'https://newsapi.org/v2';
 
 
 const getLastWeekDate = () => {
@@ -12,7 +12,7 @@ const getLastWeekDate = () => {
 
 export const searchNews = async (query) => {
   const fromDate = getLastWeekDate();
-  const url = `${BASE_URL}/everything?q=${encodeURIComponent(query)}&from=${fromDate}&sortBy=publishedAt&language=es&apiKey=${API_KEY}`;
+  const url = `${NEWS_BASE_URL}/everything?q=${encodeURIComponent(query)}&from=${fromDate}&sortBy=publishedAt&language=es&apiKey=${API_KEY}`;
 
   try {
     const response = await fetch(url);

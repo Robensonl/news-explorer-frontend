@@ -2,28 +2,24 @@ import { useEffect } from 'react';
 
 function PopupWithForm({ isOpen, onClose, title, buttonText, onSubmit, children, alternativeText, onAlternativeClick }) {
   useEffect(() => {
-    if (!isOpen) return;
-
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
+     if (!isOpen) return;
+    
+    const handleEscapeKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    
+    const handleOverlayClick = (e) => {
+      if (e.target === e.currentTarget) onClose();
     };
 
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscapeKey);
     document.body.style.overflow = 'hidden';
-
+    
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("keydown", handleEscapeKey);
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
-
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
 
   if (!isOpen) return null;
 
