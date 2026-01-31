@@ -14,7 +14,7 @@ function About() {
           </div>
           <div className="order-1 md:order-2">
             <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6">
-              Sobre el autor
+              Acerca del autor
             </h2>
             <p className="text-text-primary text-lg leading-relaxed mb-6">
               <span className="font-semibold">Robenson Louissaint</span> es desarrollador web con experiencia en construir aplicaciones modernas y responsivas. 

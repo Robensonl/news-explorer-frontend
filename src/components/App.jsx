@@ -14,12 +14,12 @@ import ProtectedRoute from './ProtectedRoute/ProtectedRoute';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 import { searchNews, filterValidArticles } from '../utils/NewsApi';
 import * as MainApi from '../utils/MainApi';
-import { 
+import {
   getFromLocalStorage,
   saveToLocalStorage,
   removeFromLocalStorage
 } from '../utils/auth';
-import { STORAGE_KEYS, ERROR_MESSAGES } from '../utils/constants';
+import { STORAGE_KEYS } from '../utils/constants';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -31,24 +31,25 @@ function App() {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showRegisterPopup, setShowRegisterPopup] = useState(false);
 
- 
+  const closeAllPopups = () => {
+    setShowLoginPopup(false);
+    setShowRegisterPopup(false);
+  };
+
   useEffect(() => {
     const token = getFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
-    if (token) {
-      MainApi.checkToken(token)
-        .then(user => {
-          setCurrentUser(user);
-          setIsLoggedIn(true);
-          return MainApi.getSavedArticles(token);
-        })
-        .then(articles => {
-          setSavedArticles(articles);
-        })
-        .catch(err => {
-          console.error('Error al verificar token:', err);
-          removeFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
-        });
-    }
+    if (!token) return;
+
+    MainApi.checkToken(token)
+      .then(user => {
+        setCurrentUser(user);
+        setIsLoggedIn(true);
+        return MainApi.getSavedArticles(token);
+      })
+      .then(setSavedArticles)
+      .catch(() => {
+        removeFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
+      });
   }, []);
 
   const handleSearch = async (query) => {
@@ -61,42 +62,30 @@ function App() {
       const validArticles = filterValidArticles(foundArticles);
       setArticles(validArticles);
       saveToLocalStorage(STORAGE_KEYS.SEARCH_QUERY, query);
-    } catch (error) {
-      console.error('Error al buscar noticias:', error);
-      setArticles([]);
     } finally {
       setIsLoading(false);
     }
-      
   };
 
   const handleRegister = async (name, email, password) => {
-    try {
-      await MainApi.register(name, email, password);
-      return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    await MainApi.register(name, email, password);
+    setShowRegisterPopup(false);
+    setShowLoginPopup(true);
   };
 
   const handleLogin = async (email, password) => {
-    try {
-      const data = await MainApi.login(email, password);
-      const { token } = data;
-      
-      saveToLocalStorage(STORAGE_KEYS.AUTH_TOKEN, token);
-      
-      const user = await MainApi.checkToken(token);
-      setCurrentUser(user);
-      setIsLoggedIn(true);
-      
-      const articles = await MainApi.getSavedArticles(token);
-      setSavedArticles(articles);
-      
-      return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    const { token } = await MainApi.login(email, password);
+
+    saveToLocalStorage(STORAGE_KEYS.AUTH_TOKEN, token);
+
+    const user = await MainApi.checkToken(token);
+    setCurrentUser(user);
+    setIsLoggedIn(true);
+
+    const articles = await MainApi.getSavedArticles(token);
+    setSavedArticles(articles);
+
+    closeAllPopups();
   };
 
   const handleSignOut = () => {
@@ -104,42 +93,44 @@ function App() {
     setIsLoggedIn(false);
     setSavedArticles([]);
     removeFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
+    closeAllPopups();
   };
 
   const handleSaveArticle = async (article) => {
+    if (!article?.title || !article?.url) return;
+
     if (!isLoggedIn) {
       setShowLoginPopup(true);
       return;
     }
 
     const token = getFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
+    if (!token) return;
+
     const articleData = {
       keyword: searchQuery,
       title: article.title,
-      text: article.description,
+      text: article.description || '',
       date: article.publishedAt,
-      source: article.source.name,
+      source: article.source?.name || 'Desconocido',
       link: article.url,
-      image: article.urlToImage
+      image: article.urlToImage || ''
     };
 
-    try {
-      const savedArticle = await MainApi.saveArticle(token, articleData);
-      setSavedArticles(prev => [...prev, { ...article, keyword: searchQuery, _id: savedArticle._id }]);
-    } catch (error) {
-      console.error('Error al guardar artículo:', error);
-    }
+    const savedArticle = await MainApi.saveArticle(token, articleData);
+
+    setSavedArticles(prev => [
+      ...prev,
+      { ...article, keyword: searchQuery, _id: savedArticle._id }
+    ]);
   };
 
   const handleRemoveArticle = async (article) => {
     const token = getFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
-    
-    try {
-      await MainApi.deleteArticle(token, article._id);
-      setSavedArticles(prev => prev.filter(saved => saved._id !== article._id));
-    } catch (error) {
-      console.error('Error al eliminar artículo:', error);
-    }
+    if (!token) return;
+
+    await MainApi.deleteArticle(token, article._id);
+    setSavedArticles(prev => prev.filter(a => a._id !== article._id));
   };
 
   return (
@@ -162,36 +153,38 @@ function App() {
           onSignOut={handleSignOut}
           setShowLoginPopup={setShowLoginPopup}
           setShowRegisterPopup={setShowRegisterPopup}
+          closeAllPopups={closeAllPopups}
         />
       </Router>
     </CurrentUserContext.Provider>
   );
 }
 
-function AppContent({ 
-  currentUser, 
-  isLoggedIn, 
-  articles, 
-  savedArticles, 
-  isLoading, 
+function AppContent({
+  currentUser,
+  isLoggedIn,
+  articles,
+  savedArticles,
+  isLoading,
   searchQuery,
   showLoginPopup,
   showRegisterPopup,
-  onSearch, 
-  onSaveArticle, 
-  onRemoveArticle, 
-  onLogin, 
+  onSearch,
+  onSaveArticle,
+  onRemoveArticle,
+  onLogin,
   onRegister,
   onSignOut,
   setShowLoginPopup,
-  setShowRegisterPopup
+  setShowRegisterPopup,
+  closeAllPopups
 }) {
   const location = useLocation();
   const currentPage = location.pathname === '/saved-news' ? 'saved' : 'home';
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header 
+      <Header
         isLoggedIn={isLoggedIn}
         currentPage={currentPage}
         onSignIn={() => setShowLoginPopup(true)}
@@ -204,7 +197,7 @@ function AppContent({
           <Main>
             <SearchForm onSearch={onSearch} isLoading={isLoading} />
             {isLoading && <Preloader />}
-            {!isLoading && searchQuery &&(
+            {!isLoading && searchQuery && (
               <NewsCardList
                 articles={articles}
                 isLoggedIn={isLoggedIn}
@@ -219,13 +212,10 @@ function AppContent({
           </Main>
         } />
 
-        <Route 
-          path="/saved-news" 
+        <Route
+          path="/saved-news"
           element={
-            <ProtectedRoute 
-              isLoggedIn={isLoggedIn} 
-              onSignIn={() => setShowLoginPopup(true)}
-            >
+            <ProtectedRoute isLoggedIn={isLoggedIn} onSignIn={() => setShowLoginPopup(true)}>
               <Main>
                 <SavedNews
                   userName={currentUser?.name || 'Usuario'}
@@ -234,7 +224,7 @@ function AppContent({
                 />
               </Main>
             </ProtectedRoute>
-          } 
+          }
         />
       </Routes>
 
@@ -242,10 +232,10 @@ function AppContent({
 
       {showLoginPopup && (
         <Login
-          onClose={() => setShowLoginPopup(false)}
+          onClose={closeAllPopups}
           onLogin={onLogin}
           onSwitchToRegister={() => {
-            setShowLoginPopup(false);
+            closeAllPopups();
             setShowRegisterPopup(true);
           }}
         />
@@ -253,10 +243,10 @@ function AppContent({
 
       {showRegisterPopup && (
         <Register
-          onClose={() => setShowRegisterPopup(false)}
+          onClose={closeAllPopups}
           onRegister={onRegister}
           onSwitchToLogin={() => {
-            setShowRegisterPopup(false);
+            closeAllPopups();
             setShowLoginPopup(true);
           }}
         />

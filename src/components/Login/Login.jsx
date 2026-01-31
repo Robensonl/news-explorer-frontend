@@ -55,7 +55,6 @@ function Login({ onClose, onLogin, onSwitchToRegister }) {
     
     try {
       await onLogin(formData.email, formData.password);
-      onClose();
     } catch (error) {
       setServerError('Email o contraseña incorrectos');
     } finally {
@@ -97,7 +96,7 @@ function Login({ onClose, onLogin, onSwitchToRegister }) {
               className={`w-full px-0 py-3 lg:py-4 text-base lg:text-lg border-b-2 focus:outline-none focus:border-accent-blue transition-all bg-transparent ${
                 errors.email ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Introduce tu correo electr\u00f3nico"
+              placeholder="Introduce tu correo "
             />
             {errors.email && (
               <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -117,7 +116,7 @@ function Login({ onClose, onLogin, onSwitchToRegister }) {
               className={`w-full px-0 py-3 lg:py-4 text-base lg:text-lg border-b-2 focus:outline-none focus:border-accent-blue transition-all bg-transparent ${
                 errors.password ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Introduce tu contrase\u00f1a"
+              placeholder="Introduce tu contraseña"
             />
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">{errors.password}</p>

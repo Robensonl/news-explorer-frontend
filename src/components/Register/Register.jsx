@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { validateEmail, validatePassword, validateName } from '../../utils/auth';
 
 function Register({ onClose, onRegister, onSwitchToLogin }) {
@@ -11,6 +11,14 @@ function Register({ onClose, onRegister, onSwitchToLogin }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+  setFormData({ name: '', email: '', password: '' });
+  setErrors({});
+  setServerError('');
+  setSuccess(false);
+}, []);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,7 +86,10 @@ function Register({ onClose, onRegister, onSwitchToLogin }) {
 
   if (success) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+  onClick={(e) => {
+    if (e.target === e.currentTarget) onClose();
+  }}>
         <div className="bg-white rounded-2xl max-w-md w-full p-8 relative text-center">
           <button
             onClick={onClose}
@@ -145,7 +156,7 @@ function Register({ onClose, onRegister, onSwitchToLogin }) {
               className={`w-full px-0 py-3 lg:py-4 text-base lg:text-lg border-b-2 focus:outline-none focus:border-accent-blue transition-all bg-transparent ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Introduce tu nombre de usuario"
+              placeholder="Introduce tu nombre"
             />
             {errors.name && (
               <p className="text-red-500 text-sm mt-1">{errors.name}</p>
@@ -165,7 +176,7 @@ function Register({ onClose, onRegister, onSwitchToLogin }) {
               className={`w-full px-0 py-3 lg:py-4 text-base lg:text-lg border-b-2 focus:outline-none focus:border-accent-blue transition-all bg-transparent ${
                 errors.email ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Introduce tu correo electr\u00f3nico"
+              placeholder="Introduce tu correo"
             />
             {errors.email && (
               <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -185,7 +196,7 @@ function Register({ onClose, onRegister, onSwitchToLogin }) {
               className={`w-full px-0 py-3 lg:py-4 text-base lg:text-lg border-b-2 focus:outline-none focus:border-accent-blue transition-all bg-transparent ${
                 errors.password ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Introduce tu contrase\u00f1a"
+              placeholder="Introduce tu contraseña"
             />
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">{errors.password}</p>

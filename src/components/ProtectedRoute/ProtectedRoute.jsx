@@ -1,10 +1,14 @@
+import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
 function ProtectedRoute({ children, isLoggedIn, onSignIn }) {
-  if (!isLoggedIn) {
-    setTimeout(() => {
+  useEffect(() => {
+    if (!isLoggedIn) {
       onSignIn();
-    }, 0);
+    }
+  }, [isLoggedIn, onSignIn]);
+
+  if (!isLoggedIn) {
     return <Navigate to="/" replace />;
   }
 

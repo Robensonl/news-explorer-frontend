@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 
 function PopupWithForm({ isOpen, onClose, title, buttonText, onSubmit, children, alternativeText, onAlternativeClick }) {
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
   useEffect(() => {
      if (!isOpen) return;
     
@@ -8,10 +12,6 @@ function PopupWithForm({ isOpen, onClose, title, buttonText, onSubmit, children,
       if (e.key === "Escape") onClose();
     };
     
-    const handleOverlayClick = (e) => {
-      if (e.target === e.currentTarget) onClose();
-    };
-
     document.addEventListener("keydown", handleEscapeKey);
     document.body.style.overflow = 'hidden';
     
