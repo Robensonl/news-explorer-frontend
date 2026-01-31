@@ -44,7 +44,14 @@ export const validateArticle = (article) => {
   );
 };
 
-// Filtrar artículos válidos
+// Filtrar y normalizar artículos válidos
 export const filterValidArticles = (articles) => {
-  return articles.filter(validateArticle);
+  return articles
+    .filter(article => article && article.title && article.url && article.source)
+    .map(article => ({
+      ...article,
+      description: article.description || 'Sin descripción disponible',
+      publishedAt: article.publishedAt || new Date().toISOString(),
+      urlToImage: article.urlToImage || article.image || null
+    }));
 };

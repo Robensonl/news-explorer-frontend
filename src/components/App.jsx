@@ -38,6 +38,13 @@ function App() {
 
   useEffect(() => {
     const token = getFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
+    
+    // Restaurar artículos guardados del localStorage si existen
+    const cachedSavedArticles = getFromLocalStorage(STORAGE_KEYS.SAVED_ARTICLES);
+    if (cachedSavedArticles) {
+      setSavedArticles(cachedSavedArticles);
+    }
+
     if (!token) return;
 
     MainApi.checkToken(token)
@@ -46,7 +53,20 @@ function App() {
         setIsLoggedIn(true);
         return MainApi.getSavedArticles(token);
       })
-      .then(setSavedArticles)
+      .then(articles => {
+        // Normalizar artículos guardados del backend
+        const normalizedArticles = articles.map(article => ({
+          ...article,
+          title: article.title || 'Sin título',
+          description: article.text || 'Sin descripción disponible',
+          publishedAt: article.date || new Date().toISOString(),
+          urlToImage: article.image || null,
+          url: article.link || article.url,
+          source: article.source ? (typeof article.source === 'string' ? { name: article.source } : article.source) : { name: 'Fuente desconocida' }
+        }));
+        setSavedArticles(normalizedArticles);
+        saveToLocalStorage(STORAGE_KEYS.SAVED_ARTICLES, normalizedArticles);
+      })
       .catch(() => {
         removeFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
       });
@@ -56,6 +76,7 @@ function App() {
     setIsLoading(true);
     setSearchQuery(query);
     setArticles([]);
+    closeAllPopups();
 
     try {
       const foundArticles = await searchNews(query);
@@ -69,8 +90,6 @@ function App() {
 
   const handleRegister = async (name, email, password) => {
     await MainApi.register(name, email, password);
-    setShowRegisterPopup(false);
-    setShowLoginPopup(true);
   };
 
   const handleLogin = async (email, password) => {
@@ -93,6 +112,7 @@ function App() {
     setIsLoggedIn(false);
     setSavedArticles([]);
     removeFromLocalStorage(STORAGE_KEYS.AUTH_TOKEN);
+    removeFromLocalStorage(STORAGE_KEYS.SAVED_ARTICLES);
     closeAllPopups();
   };
 
@@ -110,19 +130,21 @@ function App() {
     const articleData = {
       keyword: searchQuery,
       title: article.title,
-      text: article.description || '',
+      text: article.description,
       date: article.publishedAt,
-      source: article.source?.name || 'Desconocido',
+      source: article.source.name,
       link: article.url,
-      image: article.urlToImage || ''
+      image: article.urlToImage
     };
 
-    const savedArticle = await MainApi.saveArticle(token, articleData);
-
-    setSavedArticles(prev => [
-      ...prev,
-      { ...article, keyword: searchQuery, _id: savedArticle._id }
-    ]);
+      try {
+      const savedArticle = await MainApi.saveArticle(token, articleData);
+      const updatedArticles = [...savedArticles, { ...article, keyword: searchQuery, _id: savedArticle._id }];
+      setSavedArticles(updatedArticles);
+      saveToLocalStorage(STORAGE_KEYS.SAVED_ARTICLES, updatedArticles);
+    } catch (error) {
+      console.error('Error al guardar artículo:', error);
+    }
   };
 
   const handleRemoveArticle = async (article) => {
@@ -130,7 +152,9 @@ function App() {
     if (!token) return;
 
     await MainApi.deleteArticle(token, article._id);
-    setSavedArticles(prev => prev.filter(a => a._id !== article._id));
+    const updatedArticles = savedArticles.filter(a => a._id !== article._id);
+    setSavedArticles(updatedArticles);
+    saveToLocalStorage(STORAGE_KEYS.SAVED_ARTICLES, updatedArticles);
   };
 
   return (
@@ -181,6 +205,10 @@ function AppContent({
 }) {
   const location = useLocation();
   const currentPage = location.pathname === '/saved-news' ? 'saved' : 'home';
+
+  useEffect(() => {
+    closeAllPopups();
+  }, [location.pathname]);
 
   return (
     <div className="flex flex-col min-h-screen">
