@@ -226,7 +226,7 @@ function Register({ onClose, onRegister, onSwitchToLogin }) {
               onClick={onSwitchToLogin}
               className="text-accent-blue hover:text-accent-blue-hover font-medium transition-colors"
             >
-              inscribirse
+              iniciar sesión
             </button>
           </p>
         </form>
@@ -234,6 +234,7 @@ function Register({ onClose, onRegister, onSwitchToLogin }) {
       </div>
     </div>
   );
+  
 }
 
 export default Register;

@@ -5,8 +5,13 @@
   ],
   "env": {
     "browser": true,
-    "es2021":  true
+    "es2021": true
   },
+  "ignorePatterns": [
+    "dist",
+    "node_modules",
+    "build"
+  ],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
@@ -17,7 +22,16 @@
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
+    "react/no-array-index-key": "warn",
     "no-console": "warn",
-    "import/prefer-default-export": "off"
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/no-unresolved": "off"
   }
 }

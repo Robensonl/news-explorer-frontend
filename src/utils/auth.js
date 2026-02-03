@@ -1,16 +1,11 @@
-
 export const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-export const validatePassword = (password) => {
-  return password && password.length >= 8;
-};
+export const validatePassword = (password) => password && password.length >= 8;
 
-export const validateName = (name) => {
-  return name && name.trim().length >= 2;
-};
+export const validateName = (name) => name && name.trim().length >= 2;
 
 // Formatear fecha
 export const formatDate = (dateString) => {
@@ -21,17 +16,17 @@ export const formatDate = (dateString) => {
 // Truncar texto
 export const truncateText = (text, maxLength) => {
   if (!text || text.length <= maxLength) return text;
-  return text.substring(0, maxLength) + '...';
+  return `${text.substring(0, maxLength)}...`;
 };
 export const extractKeywords = (articles) => {
   const keywordCounts = {};
-  
-  articles.forEach(article => {
+
+  articles.forEach((article) => {
     if (article.keyword) {
       keywordCounts[article.keyword] = (keywordCounts[article.keyword] || 0) + 1;
     }
   });
-  
+
   return Object.entries(keywordCounts)
     .sort((a, b) => b[1] - a[1])
     .map(([keyword]) => keyword);
@@ -46,7 +41,6 @@ export const saveToLocalStorage = (key, data) => {
     return false;
   }
 };
-
 
 export const getFromLocalStorage = (key) => {
   try {

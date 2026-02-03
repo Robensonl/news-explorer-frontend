@@ -1,15 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
   darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
-        'inter': ['Inter', 'Arial', 'sans-serif'],
-        'roboto': ['Roboto', 'Arial', 'sans-serif'],
+        inter: ['Inter', 'Arial', 'sans-serif'],
+        roboto: ['Roboto', 'Arial', 'sans-serif'],
         'roboto-slab': ['Roboto Slab', 'serif'],
       },
       colors: {
@@ -44,8 +44,8 @@ export default {
         content: '1232px',
       },
       spacing: {
-        '18': '4.5rem',
-        '22': '5.5rem',
+        18: '4.5rem',
+        22: '5.5rem',
       },
       keyframes: {
         fadeIn: {
@@ -64,4 +64,4 @@ export default {
     },
   },
   plugins: [],
-}
+};
