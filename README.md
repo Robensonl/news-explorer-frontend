@@ -150,4 +150,4 @@ Navegación adaptativa con:
 
 ## 📄 Licencia
 
-© 2026 News Explorer. Desarrollado por TripleTen.
+© 2026 News Explorer. Desarrollado por Robenson Louissaint
