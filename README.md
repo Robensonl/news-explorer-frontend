@@ -146,7 +146,6 @@ Navegación adaptativa con:
 ## 🔗 Enlaces
 
 - [Backend Repository](https://github.com/Robensonl/news-explorer-backend)
-- [Diseño Figma](https://www.figma.com/design/J4KquU6h9U8eoDeOSaBPKW/Tu-proyecto-final-ESP)
 
 ## 📄 Licencia
 

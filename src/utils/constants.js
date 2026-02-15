@@ -1,6 +1,6 @@
 
 export const API_BASE_URL = 'https://newsapi.org/v2';
-export const BACKEND_URL = 'http://localhost:3000';
+export const BACKEND_URL = 'https://news-explorer-backend-production.up.railway.app';
 
 // Límites y configuraciones
 export const ARTICLES_PER_PAGE = 3;

@@ -1,4 +1,4 @@
-const AUTH_BASE_URL = 'http://localhost:3000';
+const AUTH_BASE_URL = 'https://news-explorer-backend-production.up.railway.app';
 
 const handleResponse = (res) => {
   if (res.ok) {

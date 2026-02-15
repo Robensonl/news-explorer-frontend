@@ -1,15 +1,9 @@
-const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
-const NEWS_BASE_URL = 'https://newsapi.org/v2';
-
-const getLastWeekDate = () => {
-  const date = new Date();
-  date.setDate(date.getDate() - 7);
-  return date.toISOString().split('T')[0];
-};
+const BACKEND_BASE_URL = import.meta.env.MODE === 'development'
+  ? 'http://localhost:3000'
+  : 'https://news-explorer-backend-production.up.railway.app';
 
 export const searchNews = async (query) => {
-  const fromDate = getLastWeekDate();
-  const url = `${NEWS_BASE_URL}/everything?q=${encodeURIComponent(query)}&from=${fromDate}&sortBy=publishedAt&language=es&apiKey=${API_KEY}`;
+  const url = `${BACKEND_BASE_URL}/news?q=${encodeURIComponent(query)}`;
 
   try {
     const response = await fetch(url);
